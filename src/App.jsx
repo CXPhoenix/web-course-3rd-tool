@@ -22,8 +22,10 @@ function deleteCode(Codes, codeIndex) {
 }
 
 function App() {
-  const [htmlCodes, setHtmlCodes] = useState([...htmlCodesData]);
-  const [cssCodes, setCssCodes] = useState([...defaultCssData]);
+  const saveHtml = window.sessionStorage.getItem('saveHtmlCodes') ? window.sessionStorage.getItem('saveHtmlCodes').split(',') : null;
+  const saveCss = window.sessionStorage.getItem('saveCssCodes') ? window.sessionStorage.getItem('saveCssCodes').split(',') : null;
+  const [htmlCodes, setHtmlCodes] = useState(saveHtml || [...htmlCodesData]);
+  const [cssCodes, setCssCodes] = useState(saveCss || [...defaultCssData]);
   const [openModal, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState("html");
   const [useBs, setUseBsState] = useState(false);
@@ -137,7 +139,9 @@ function App() {
       elementStyle.value = "";
       elementContent.value = "";
       elementExtraSetting.value = "";
-      setHtmlCodes(addCode([...htmlCodes], codes));
+      const newCodes = addCode([...htmlCodes], codes)
+      window.sessionStorage.setItem('saveHtmlCodes', newCodes)
+      setHtmlCodes(newCodes);
       setModalOpen(false);
       return;
     }
@@ -150,18 +154,24 @@ function App() {
       }`;
       elementName.value = "";
       elementContent.value = "";
-      setCssCodes(addCode([...cssCodes], codes));
+      const newCodes = addCode([...cssCodes], codes)
+      window.sessionStorage.setItem('saveCssCodes', newCodes)
+      setCssCodes(newCodes);
       setModalOpen(false);
       return;
     }
   }
 
   function deleteHtmlCodeEventHandler(codeSource) {
-    setHtmlCodes(deleteCode([...htmlCodes], codeSource.index));
+    const newCodes = deleteCode([...htmlCodes], codeSource.index)
+    window.sessionStorage.setItem('saveHtmlCodes', newCodes)
+    setHtmlCodes(newCodes);
   }
 
   function deleteCssCodeEventHandler(codeSource) {
-    setCssCodes(deleteCode([...cssCodes], codeSource.index));
+    const newCodes = deleteCode([...cssCodes], codeSource.index)
+    window.sessionStorage.setItem('saveCssCodes', newCodes)
+    setCssCodes(newCodes);
   }
 
   function changeHtmlCodeEventHandler(codeSource, codeDestination) {
@@ -169,6 +179,7 @@ function App() {
     const tmp = tmpCodes[codeSource.index];
     tmpCodes.splice(codeSource.index, 1);
     tmpCodes.splice(codeDestination.index, 0, tmp);
+    window.sessionStorage.setItem('saveHtmlCodes', tmpCodes)
     setHtmlCodes(tmpCodes);
   }
 
@@ -177,6 +188,7 @@ function App() {
     const tmp = tmpCodes[codeSource.index];
     tmpCodes.splice(codeSource.index, 1);
     tmpCodes.splice(codeDestination.index, 0, tmp);
+    window.sessionStorage.setItem('saveCssCodes', tmpCodes)
     setCssCodes(tmpCodes);
   }
 
